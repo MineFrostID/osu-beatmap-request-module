@@ -7,11 +7,7 @@ Join my Discord server if you want to ask about something : **[Join Here](https:
 Here's a list of all software that needs to be installed before you download the bot.
 
 A. Software to install:
-   * [Streamer.bot](https://streamer.bot/)
-   * [node.js](https://nodejs.org/en/download/prebuilt-installer)
-   
-B. Installation
-   1. Streamer.bot
+   1. [Streamer.bot](https://streamer.bot/)
       1. Download Streamer.bot [here](https://streamer.bot/)
       2. Open the software, go to:
          > Platform>Youtube>**Account**
@@ -30,7 +26,7 @@ B. Installation
 
          Right click ( **[Main] # Switch** ) and Enabled
       5. You're good to go to the next step
-   2. nodejs (Skip this part if you know how to install it)
+   2. [node.js](https://nodejs.org/en/download/prebuilt-installer) (Skip this part if you know how to install it)
       1. Download nodejs [here](https://nodejs.org/en/download/prebuilt-installer) (I recommended you to install LTS version)
       2. Install it
       3. Check on terminal using this command:
