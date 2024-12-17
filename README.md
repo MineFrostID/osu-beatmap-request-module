@@ -49,7 +49,7 @@ B. Streamer.bot
 3. That's it
 
 ### NOTE FOR YOUTUBE STREAMER
-Make a new stream schedule and GO LIVE (Streamer.bot will not working if you don't have any live stream)
+Make a new stream schedule and GO LIVE (Streamer.bot will not work if you don't have a live stream)
 
 ## How to use (For Viewer)
 Use this format to request :
