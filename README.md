@@ -1,4 +1,4 @@
-# osu-Request-Bot
+# osu-Beatmap-Request-Module
 (IF YOU ARE PLAYING ON LAZER, I'M SORRY. THIS BOT IS NOT WORKING ON LAZER FOR NOW)
 <br/>
 Join my Discord server if you want to ask about something : **[Join Here](https://discord.gg/RT5eC26qYa)** (Mostly Indonesian)
@@ -24,7 +24,7 @@ A. [Streamer.bot](https://streamer.bot/)
 
 
 ## Installation
-1. Download .exe file from [Release](https://github.com/MineFrostID/osu-request-bot/releases/latest)
+1. Download .exe file from [Release](https://github.com/MineFrostID/osu-beatmap-request-module/releases/latest)
 2. Open it
 
 ## Streamer.bot Config
@@ -34,8 +34,8 @@ A. [Streamer.bot](https://streamer.bot/)
 - Make sure osu! Request command is enabled
 
 ## How to use (For Streamer)
-A. osu! request bot app
-1. Open osu-request-bot app
+A. osu! request module app
+1. Open osu-beatmap-request-module app
 2. Click the link inside terminal to login
 3. Authorize with your osu! account
 4. Go back to terminal, click another link to get legacy api
