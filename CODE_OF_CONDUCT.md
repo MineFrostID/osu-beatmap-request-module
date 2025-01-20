@@ -6,4 +6,4 @@
 - Help others and provide constructive feedback.
 
 ## Reporting Issues
-If someone violates these rules, report it to [obenunity56@gmail.com]. We'll review and respond as quickly as possible.
+If someone violates these rules, report it to the server [Frost's Lounge](https://discord.gg/RT5eC26qYa). We'll review and respond as quickly as possible.
