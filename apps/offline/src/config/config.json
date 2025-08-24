@@ -1,0 +1,12 @@
+{
+  "server": {
+    "port": 3000,
+    "debug": true
+  },
+  "oauth": {
+    "CLIENT_ID": "your_client_id",
+    "CLIENT_SECRET": "your_client_secret",
+    "REDIRECT_URI": "your_redirect_uri",
+    "SCOPE_LIST": ["identify", "public"]
+  }
+}
