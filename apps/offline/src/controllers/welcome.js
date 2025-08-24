@@ -23,11 +23,11 @@ const welcomeMessage = async () => {
           setting.legacy_api_key
         );
 
-        return console.info("Logged in successfully!");
+        return console.info("Logged in successfully! You can now use the bot.");
       }
     } catch (error) {
-      console.error("Error reading your setting");
-      console.error(error.message);
+      console.error("Error loading settings:", error);
+      return;
     }
   }
   console.info("Please login to your osu! account");
