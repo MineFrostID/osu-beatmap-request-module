@@ -10,7 +10,7 @@ const welcomeMessage = async () => {
 
   if (settingCheck()) {
     try {
-      const settingPath = path.join(process.cwd(), "../setting.json");
+      const settingPath = path.join(process.cwd(), "./setting.json");
       let setting = {};
 
       const rawData = fs.readFileSync(settingPath, "utf8");
@@ -36,14 +36,14 @@ const welcomeMessage = async () => {
 };
 
 const settingCheck = () => {
-  const settingPath = path.join(process.cwd(), "../setting.json");
+  const settingPath = path.join(process.cwd(), "./setting.json");
   let status = true;
   if (!fs.existsSync(settingPath)) {
     fs.writeFileSync(settingPath, "{}", "utf8");
     status = false;
   }
 
-  const logsPath = path.join(process.cwd(), "../logs");
+  const logsPath = path.join(process.cwd(), "./logs");
   if (!fs.existsSync(logsPath)) {
     fs.mkdirSync(logsPath);
     status = false;

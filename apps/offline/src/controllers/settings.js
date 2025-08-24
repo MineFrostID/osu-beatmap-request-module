@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const settingsPath = path.resolve(process.cwd(), "../setting.json");
+const settingsPath = path.resolve(process.cwd(), "./setting.json");
 
 function loadSettings() {
   if (fs.existsSync(settingsPath)) {

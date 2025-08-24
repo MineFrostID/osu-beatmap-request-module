@@ -133,7 +133,7 @@ const logRequest = (username, detail, mapper, reqMods, mapUrl) => {
     .toString()
     .padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
 
-  const logsPath = path.join(process.cwd(), "../logs");
+  const logsPath = path.join(process.cwd(), "./logs");
   const filename = `${date}.txt`;
   const filePath = path.join(logsPath, filename);
 
