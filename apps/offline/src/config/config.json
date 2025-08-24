@@ -4,9 +4,9 @@
     "debug": true
   },
   "oauth": {
-    "CLIENT_ID": "your_client_id",
-    "CLIENT_SECRET": "your_client_secret",
-    "REDIRECT_URI": "your_redirect_uri",
+    "CLIENT_ID": "30343",
+    "CLIENT_SECRET": "blbtdhnQUCuDckidUjUvM8a7ziMfhrb0XrcVRdhp",
+    "REDIRECT_URI": "http://localhost:3000/callback",
     "SCOPE_LIST": ["identify", "public"]
   }
 }
