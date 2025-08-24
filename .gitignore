@@ -1,2 +1,4 @@
-.env
-node_modules/
+apps/offline/node_modules/
+apps/offline/src/config/configDefault.json
+apps/setting.json
+apps/logs
