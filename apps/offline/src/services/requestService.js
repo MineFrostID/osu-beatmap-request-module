@@ -79,7 +79,7 @@ const sendRequest = async (input, username) => {
     }
 
     try {
-      const mapUrl = data.url;
+      const mapUrl = `https://osu.ppy.sh/b/${data.id}`;
       const artist = data.beatmapset.artist || "Unknown Artist";
       const title = data.beatmapset.title || "Unknown Title";
       const mapper = data.beatmapset.creator || "Unknown Mapper";
@@ -137,10 +137,8 @@ const logRequest = (username, detail, mapper, reqMods, mapUrl) => {
   const filename = `${date}.txt`;
   const filePath = path.join(logsPath, filename);
 
-  // Konten log
-  const logContent = `=====================================\n[${date} ${time}]\nREQUEST BY: ${username}\nDETAIL: ${detail}\nMAPPER: ${mapper}\nMODS: ${reqMods}\nLINK: ${mapUrl}\n=====================================\n`;
+  const logContent = `=====================================\n[${date} ${time}]\nREQUEST BY: ${username}\nDETAIL: ${detail}\nMAPPER: ${mapper}\nMODS: ${reqMods}\nLINK: ${mapUrl}\n=====================================\n\n`;
 
-  // Tambahkan ke file log (append)
   fs.appendFileSync(filePath, logContent, "utf8");
 };
 
