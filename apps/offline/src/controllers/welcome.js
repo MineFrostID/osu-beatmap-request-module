@@ -4,7 +4,6 @@ const path = require("path");
 const osuAuthService = require("../services/osuAuthService");
 const banchoService = require("../services/banchoService");
 
-// Welcome Message
 const welcomeMessage = async () => {
   console.info("WELCOME TO OSU! REQUEST YOUTUBE BOT!");
 
