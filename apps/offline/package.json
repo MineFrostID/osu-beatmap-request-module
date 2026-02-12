@@ -3,13 +3,15 @@
   "version": "1.5.0",
   "private": false,
   "scripts": {
-    "start": "nodemon node ./bin/www",
+    "start": "node ./bin/www",
     "build-pkg": "pkg ."
   },
   "dependencies": {
     "bancho.js": "^0.11.6",
     "console-stamp": "^3.1.2",
+    "dotenv": "^17.2.4",
     "express": "^4.21.0",
+    "morgan": "^1.10.1",
     "osu-api-extended": "^2.8.52"
   },
   "bin": "./bin/www",
@@ -23,8 +25,7 @@
       "node_modules/bancho.js/**",
       "node_modules/readline/**",
       "node_modules/express/**",
-      "node_modules/lzma-native/**",
-      "src/config/config.json"
+      "node_modules/lzma-native/**"
     ],
     "outputPath": "dist"
   }

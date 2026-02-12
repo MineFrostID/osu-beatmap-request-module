@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const osuAuthService = require("../services/osuAuthService");
 const banchoService = require("../services/banchoService");
-const requestService = require("../services/requestService");
+const request = require("../controllers/request");
 
 router.get("/", (req, res) => {
   if (banchoService.isLoggedIn()) {
@@ -27,7 +27,7 @@ router.get("/callback", async (req, res) => {
   }
   const userInfo = await osuAuthService.redirectUser(req.query.code);
   res.send(
-    `Logged in as ${userInfo.username}. Get your token at https://osu.ppy.sh/home/account/edit#legacy-api and continue to input your API V1 Token!`
+    `Logged in as ${userInfo.username}. Get your token at https://osu.ppy.sh/home/account/edit#legacy-api and continue to input your API V1 Token!`,
   );
   await banchoService.loginBanchoJs(userInfo.username);
 });
@@ -37,9 +37,9 @@ router.get("/request/:id", async (req, res) => {
     res.send("Please login first!");
     return;
   }
-  const message = await requestService.sendRequest(req.params.id, "Anonymous");
-  if (!message) res.send("Beatmap not found, try another one!");
-  else res.send(message);
+  const data = await request.sendRequest(req.params.id, "Anonymous");
+  if (!data) res.send("Beatmap not found, try another one!");
+  else res.send(data);
 });
 
 router.get("/request/:id/:name", async (req, res) => {
@@ -47,12 +47,9 @@ router.get("/request/:id/:name", async (req, res) => {
     res.send("Please login first!");
     return;
   }
-  const message = await requestService.sendRequest(
-    req.params.id,
-    req.params.name
-  );
-  if (!message) res.send("Beatmap not found, try another one!");
-  else res.send(message);
+  const data = await request.sendRequest(req.params.id, req.params.name);
+  if (!data) res.send("Beatmap not found, try another one!");
+  else res.send(data);
 });
 
 module.exports = router;

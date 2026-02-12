@@ -1,4 +1,4 @@
-const port = require("../config/config.json").server.port;
+const port = process.env.PORT || 3000;
 const fs = require("fs");
 const path = require("path");
 const osuAuthService = require("../services/osuAuthService");
@@ -19,10 +19,10 @@ const welcomeMessage = async () => {
         await osuAuthService.authorizeUser(setting.oauth_code.username);
         await banchoService.connectBancho(
           setting.oauth_code.username,
-          setting.legacy_api_key
+          setting.legacy_api_key,
         );
 
-        return console.info("Logged in successfully! You can now use the bot.");
+        return console.info("YOU CAN NOW USE THE BOT.");
       }
     } catch (error) {
       console.error("Error loading settings:", error);
@@ -42,11 +42,25 @@ const settingCheck = () => {
     status = false;
   }
 
-  const logsPath = path.join(process.cwd(), "./logs");
-  if (!fs.existsSync(logsPath)) {
-    fs.mkdirSync(logsPath);
+  // NOT USING IT FOR NOW
+  // const logsPath = path.join(process.cwd(), "./logs");
+  // if (!fs.existsSync(logsPath)) {
+  //   fs.mkdirSync(logsPath);
+  //   status = false;
+  // }
+
+  const historyPath = path.join(process.cwd(), "./history");
+  if (!fs.existsSync(historyPath)) {
+    fs.mkdirSync(historyPath);
     status = false;
   }
+
+  const configPath = path.join(process.cwd(), "./config.json");
+  if (!fs.existsSync(configPath)) {
+    fs.writeFileSync(configPath, "{}", "utf8");
+    status = false;
+  }
+
   return status;
 };
 

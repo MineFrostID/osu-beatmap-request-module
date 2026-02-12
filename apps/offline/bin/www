@@ -1,9 +1,9 @@
+const dotenv = require("dotenv").config({ quiet: true });
 const app = require("../app");
 const debug = require("debug")("npbot-new:server");
 const http = require("http");
-const config = require("../src/config/config.json");
 
-const port = normalizePort(config.server.port || "1054");
+const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
 
 const server = http.createServer(app);
@@ -31,8 +31,11 @@ function onError(error) {
       break;
     case "EADDRINUSE":
       console.error(bind + " is already in use");
-      process.exit(1);
-      break;
+      console.log("Press ANY key to exit...");
+
+      process.stdin.resume();
+      process.stdin.on("data", () => process.exit(1));
+      return;
     default:
       throw error;
   }
@@ -41,6 +44,9 @@ function onError(error) {
 function onListening() {
   const addr = server.address();
   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  console.log(`Listening on ${bind}`);
+  // console.log(`Listening on ${bind}`);
   debug("Listening on " + bind);
+
+  const { welcomeMessage } = require("../src/controllers/welcome");
+  welcomeMessage();
 }

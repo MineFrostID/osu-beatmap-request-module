@@ -1,6 +1,10 @@
 const { v2 } = require("osu-api-extended");
 const banchojs = require("bancho.js");
-const { getClient, getUsers, isLoggedIn } = require("./banchoService");
+const {
+  getClient,
+  getUsers,
+  isLoggedIn,
+} = require("../services/banchoService");
 const path = require("path");
 const fs = require("fs");
 
@@ -98,7 +102,7 @@ const sendRequest = async (input, username) => {
       const banchoMessage = new banchojs.OutgoingBanchoMessage(
         client,
         users,
-        `${username} => [${reqMods}] ${message}`
+        `${username} => [${reqMods}] ${message}`,
       );
       banchoMessage.send();
 
@@ -110,9 +114,15 @@ const sendRequest = async (input, username) => {
       console.log("LINK       :", mapUrl);
       console.log("=====================================");
 
-      logRequest(username, detail, mapper, reqMods, mapUrl);
+      historyRequest(username, detail, mapper, reqMods, mapUrl);
 
-      return respondMessage;
+      const response = {
+        status: "success",
+        message: respondMessage,
+        data: data,
+      };
+
+      return response;
     } catch (e) {
       console.log("Failed to send message:", e?.message || e);
       return false;
@@ -122,7 +132,7 @@ const sendRequest = async (input, username) => {
   }
 };
 
-const logRequest = (username, detail, mapper, reqMods, mapUrl) => {
+const historyRequest = (username, detail, mapper, reqMods, mapUrl) => {
   const now = new Date();
 
   const date = `${now.getFullYear()}-${(now.getMonth() + 1)
@@ -133,7 +143,7 @@ const logRequest = (username, detail, mapper, reqMods, mapUrl) => {
     .toString()
     .padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
 
-  const logsPath = path.join(process.cwd(), "./logs");
+  const logsPath = path.join(process.cwd(), "./history");
   const filename = `${date}.txt`;
   const filePath = path.join(logsPath, filename);
 

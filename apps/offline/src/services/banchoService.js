@@ -14,12 +14,12 @@ const rl = readline.createInterface({
 function getAPICode() {
   console.log("=====================================");
   console.log(
-    "Get your token at https://osu.ppy.sh/home/account/edit#legacy-api"
+    "Get your token at https://osu.ppy.sh/home/account/edit#legacy-api",
   );
   return new Promise((resolve) =>
     rl.question("Enter your osu! API V1 token: ", (answer) =>
-      resolve(answer?.trim())
-    )
+      resolve(answer?.trim()),
+    ),
   );
 }
 
@@ -37,7 +37,7 @@ const connectBancho = async (username, token) => {
   await client.connect();
   users = client.getSelf();
 
-  console.log("BANCHOJS CONNECTED!");
+  console.log("bancho.js Connected!");
   rl.close();
   loginStatus = true;
 
@@ -72,7 +72,7 @@ const loginBanchoJs = async (username) => {
 
   if (!loginSuccess) {
     console.log(
-      "Failed to connect BanchoJS after 3 attempts. Stopping server..."
+      "Failed to connect BanchoJS after 3 attempts. Stopping server...",
     );
     process.exit(1);
   }
