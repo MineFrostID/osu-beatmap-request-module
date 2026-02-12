@@ -1,4 +1,8 @@
 apps/offline/node_modules/
-apps/offline/src/config/configDefault.json
-apps/setting.json
+apps/offline/history
+apps/offline/logs
+apps/offline/.env
+apps/offline/setting.json
+apps/offline/config.json
 apps/logs
+.vscode
