@@ -1,11 +1,11 @@
 const { auth } = require("osu-api-extended");
-const env = process.env;
-const client_id = env.CLIENT_ID;
-const client_secret = env.CLIENT_SECRET;
-const redirect_uri = env.REDIRECT_URI;
-const scope_list = JSON.parse(env.SCOPE_LIST);
+const { loadSettings, saveSettings } = require("../controllers/settings");
+const config = require("../../config.json");
 
-const settings = require("../controllers/settings");
+const client_id = config.clientId;
+const client_secret = config.clientSecret;
+const redirect_uri = config.redirectUri;
+const scope_list = config.scopeList;
 
 let userInfo = null;
 
@@ -14,53 +14,76 @@ const buildLoginUrl = () => {
 };
 
 const redirectUser = async (code) => {
-  if (!code) throw new Error("Missing authorization code");
-
-  userInfo = await auth.authorize(
-    code,
-    "osu",
-    client_id,
-    client_secret,
-    redirect_uri,
-  );
-
-  if (userInfo?.authentication === "basic") {
-    throw new Error(
-      "Failed to authorize with osu! (check CLIENT_ID/SECRET/REDIRECT_URI)",
-    );
+  if (!code) {
+    console.log("Authorization code is missing. Please login first.");
+    return null;
   }
 
-  await authorizeUser(userInfo.username);
+  try {
+    userInfo = await auth.authorize(
+      code,
+      "osu",
+      client_id,
+      client_secret,
+      redirect_uri,
+    );
 
-  return userInfo;
+    if (userInfo?.authentication === "basic") {
+      console.log(
+        "Failed to authorize. Please check your CLIENT_ID, CLIENT_SECRET, or REDIRECT_URI.",
+      );
+      return null;
+    }
+
+    await authorizeUser(userInfo.username);
+    return userInfo;
+  } catch (error) {
+    handleError(error, "redirectUser");
+    return null;
+  }
 };
 
 const authorizeUser = async (username) => {
-  const setting = settings.loadSettings();
+  try {
+    const setting = loadSettings();
 
-  if (setting.oauth_code) {
-    await auth.login(
-      client_id,
-      client_secret,
-      scope_list,
-      setting.oauth_code.access_token,
-    );
-  } else {
-    const data = await auth.login(client_id, client_secret, scope_list);
+    if (setting.oauth_code) {
+      await auth.login(
+        client_id,
+        client_secret,
+        scope_list,
+        setting.oauth_code.access_token,
+      );
+    } else {
+      const data = await auth.login(client_id, client_secret, scope_list);
+      data.username = username;
+      setting.oauth_code = data;
+      saveSettings(setting);
+    }
 
-    data.username = username;
-    setting.oauth_code = data;
-    settings.saveSettings(setting);
+    console.log("osu-api-extended connected successfully!");
+  } catch (error) {
+    handleError(error, "authorizeUser");
   }
-
-  console.log("osu-api-extended Connected!");
 };
 
 const getUserInfo = () => userInfo;
 
-module.exports = {
-  buildLoginUrl,
-  redirectUser,
-  authorizeUser,
-  getUserInfo,
+const handleError = (error, context = "") => {
+  const fatalErrors = [
+    "ENOTFOUND",
+    "ECONNREFUSED",
+    "TypeError",
+    "ReferenceError",
+  ];
+
+  if (
+    fatalErrors.some((f) => error.message.includes(f) || error.name.includes(f))
+  ) {
+    console.error(`Fatal error in ${context}:`, error);
+  } else {
+    console.log(`Oops, something went wrong in ${context}. Please try again.`);
+  }
 };
+
+module.exports = { buildLoginUrl, redirectUser, authorizeUser, getUserInfo };

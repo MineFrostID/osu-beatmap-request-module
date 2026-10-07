@@ -1,6 +1,6 @@
 const banchojs = require("bancho.js");
 const readline = require("readline");
-const settings = require("../controllers/settings");
+const { saveSettings, loadSettings } = require("../controllers/settings");
 
 let client = null;
 let users = null;
@@ -11,73 +11,76 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-function getAPICode() {
-  console.log("=====================================");
-  console.log(
-    "Get your token at https://osu.ppy.sh/home/account/edit#legacy-api",
-  );
-  return new Promise((resolve) =>
-    rl.question("Enter your osu! API V1 token: ", (answer) =>
-      resolve(answer?.trim()),
-    ),
-  );
-}
-
-const connectBancho = async (username, token) => {
-  client = new banchojs.BanchoClient({
-    username: username,
-    password: token,
-  });
-
-  client.on("disconnect", () => {
-    console.log("BANCHOJS DISCONNECTED!");
-    loginStatus = false;
-  });
-
-  await client.connect();
-  users = client.getSelf();
-
-  console.log("bancho.js Connected!");
-  rl.close();
-  loginStatus = true;
-
-  const setting = settings.loadSettings();
-  setting.legacy_api_key = token;
-  settings.saveSettings(setting);
-
-  return { client, users };
+const handleError = (error, context = "") => {
+  const fatalErrors = [
+    "ENOTFOUND",
+    "ECONNREFUSED",
+    "TypeError",
+    "ReferenceError",
+  ];
+  if (
+    fatalErrors.some((f) => error.message.includes(f) || error.name.includes(f))
+  ) {
+    console.error(`Fatal error in ${context}:`, error);
+  } else {
+    console.log(
+      `Oops, something went wrong in ${context}. Please check your input and try again.`,
+    );
+  }
 };
 
-const loginBanchoJs = async (username) => {
-  if (loginStatus && client) return { client, users };
+const connectBancho = async (username, token) => {
+  try {
+    client = new banchojs.BanchoClient({
+      username: username,
+      password: token,
+    });
 
-  let TOKEN_V1 = null;
-  let loginSuccess = false;
+    client.on("disconnect", () => {
+      console.log("BANCHOJS DISCONNECTED!");
+      loginStatus = false;
+    });
 
-  for (let i = 0; i < 3 && !loginSuccess; i++) {
-    TOKEN_V1 = await getAPICode();
-    if (!TOKEN_V1) {
+    await client.connect();
+    users = client.getSelf();
+
+    console.log("bancho.js Connected!");
+    rl.close();
+    loginStatus = true;
+
+    const setting = loadSettings();
+    setting.legacy_api_key = token;
+    saveSettings(setting);
+
+    return { client, users };
+  } catch (error) {
+    handleError(error, "connectBancho");
+    return null;
+  }
+};
+
+const loginBanchoJs = async (username, api) => {
+  try {
+    if (loginStatus && client) return { client, users };
+
+    if (!api) {
       console.log("API V1 token cannot be empty. Please try again.");
-      i--;
-      continue;
+      return null;
     }
-    try {
-      await connectBancho(username, TOKEN_V1);
-      loginSuccess = true;
-    } catch (e) {
-      console.log("Failed to connect BanchoJS. Error: ", e);
-      await new Promise((r) => setTimeout(r, 1000));
+
+    const connection = await connectBancho(username, api);
+    if (!connection) {
+      console.log(
+        "Failed to connect BanchoJS. Please make sure your username and token are correct.",
+      );
+      return null;
     }
-  }
 
-  if (!loginSuccess) {
-    console.log(
-      "Failed to connect BanchoJS after 3 attempts. Stopping server...",
-    );
-    process.exit(1);
+    return connection;
+  } catch (error) {
+    handleError(error, "loginBanchoJs");
+    return null;
   }
-
-  return { client, users };
 };
 
 const isLoggedIn = () => Boolean(loginStatus && client);
