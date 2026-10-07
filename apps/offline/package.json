@@ -1,6 +1,6 @@
 {
-  "name": "osu-request-bot-youtube",
-  "version": "1.5.0",
+  "name": "osu-beatmap-request-module",
+  "version": "1.5.6",
   "private": false,
   "scripts": {
     "start": "node ./bin/www",
@@ -21,7 +21,8 @@
       "src/**/*.js"
     ],
     "assets": [
-      "node_modules/**",
+      "node_modules/lzma/src/**",
+      "node_modules/lzma-native/prebuilds/win32-x64/node.napi.node",
       "src/views/*.html"
     ],
     "outputPath": "dist",
