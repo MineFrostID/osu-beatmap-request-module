@@ -1,7 +1,7 @@
 const express = require("express");
 // const logger = require("morgan");
 const indexRouter = require("./src/routes/index");
-const { getViewsDir } = require("./src/utils/veiwPath.js");
+const { getViewsDir } = require("./src/utils/viewPath.js");
 const path = require("path");
 const app = express();
 

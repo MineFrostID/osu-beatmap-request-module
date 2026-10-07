@@ -7,6 +7,11 @@ const {
 } = require("../services/banchoService");
 const path = require("path");
 const fs = require("fs");
+const {
+  historyRequest,
+  successTemplate,
+  notFoundTemplate,
+} = require("../utils/templateHelper");
 
 const MODS = new Set([
   "EZ",
@@ -78,8 +83,13 @@ const sendRequest = async (input, username) => {
     }
 
     if (!data || data.error) {
-      console.log("Beatmap not found or API returned error.");
-      return false;
+      const message = "Beatmap not found, please try another one.";
+      notFoundTemplate(message);
+      const response = {
+        status: "success",
+        message: message,
+      };
+      return response;
     }
 
     try {
@@ -106,13 +116,7 @@ const sendRequest = async (input, username) => {
       );
       banchoMessage.send();
 
-      console.log("=====================================");
-      console.log("REQUEST BY :", username);
-      console.log("DETAIL     :", detail);
-      console.log("MAPPER     :", mapper);
-      console.log("MODS       :", reqMods);
-      console.log("LINK       :", mapUrl);
-      console.log("=====================================");
+      successTemplate(username, detail, mapper, reqMods, mapUrl);
 
       historyRequest(username, detail, mapper, reqMods, mapUrl);
 
@@ -130,26 +134,6 @@ const sendRequest = async (input, username) => {
   } catch (error) {
     console.log("Failed to send request:", error?.message || error);
   }
-};
-
-const historyRequest = (username, detail, mapper, reqMods, mapUrl) => {
-  const now = new Date();
-
-  const date = `${now.getFullYear()}-${(now.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}`;
-  const time = `${now.getHours().toString().padStart(2, "0")}:${now
-    .getMinutes()
-    .toString()
-    .padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
-
-  const logsPath = path.join(process.cwd(), "./history");
-  const filename = `${date}.txt`;
-  const filePath = path.join(logsPath, filename);
-
-  const logContent = `=====================================\n[${date} ${time}]\nREQUEST BY: ${username}\nDETAIL: ${detail}\nMAPPER: ${mapper}\nMODS: ${reqMods}\nLINK: ${mapUrl}\n=====================================\n\n`;
-
-  fs.appendFileSync(filePath, logContent, "utf8");
 };
 
 module.exports = { sendRequest };

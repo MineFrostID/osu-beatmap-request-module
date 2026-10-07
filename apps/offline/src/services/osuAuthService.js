@@ -15,7 +15,6 @@ const buildLoginUrl = () => {
 
 const redirectUser = async (code) => {
   if (!code) {
-    // Non-fatal: user belum memberikan code
     console.log("Authorization code is missing. Please login first.");
     return null;
   }
@@ -70,11 +69,6 @@ const authorizeUser = async (username) => {
 
 const getUserInfo = () => userInfo;
 
-/**
- * Handle error secara ramah
- * @param {Error} error
- * @param {string} context
- */
 const handleError = (error, context = "") => {
   const fatalErrors = [
     "ENOTFOUND",
@@ -83,13 +77,11 @@ const handleError = (error, context = "") => {
     "ReferenceError",
   ];
 
-  // Jika error termasuk fatal, tampilkan stack lengkap
   if (
     fatalErrors.some((f) => error.message.includes(f) || error.name.includes(f))
   ) {
     console.error(`Fatal error in ${context}:`, error);
   } else {
-    // Non-fatal, tampilkan pesan sederhana
     console.log(`Oops, something went wrong in ${context}. Please try again.`);
   }
 };

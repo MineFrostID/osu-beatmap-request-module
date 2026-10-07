@@ -61,8 +61,7 @@ router.get("/request/:id", async (req, res) => {
     return;
   }
   const data = await sendRequest(req.params.id, "Anonymous");
-  if (!data) res.send("Beatmap not found, try another one!");
-  else res.send(data);
+  res.send(data);
 });
 
 router.get("/request/:id/:name", async (req, res) => {
@@ -71,8 +70,7 @@ router.get("/request/:id/:name", async (req, res) => {
     return;
   }
   const data = await sendRequest(req.params.id, req.params.name);
-  if (!data) res.send("Beatmap not found, try another one!");
-  else res.send(data);
+  res.send(data);
 });
 
 module.exports = router;

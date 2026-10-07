@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { exec } = require("child_process");
 
-const settingsPath = path.resolve(process.cwd(), "setting.json");
+const settingsPath = path.join(path.dirname(process.execPath), "setting.json");
 
 function ensureSettingsFile() {
   if (!fs.existsSync(settingsPath)) {
