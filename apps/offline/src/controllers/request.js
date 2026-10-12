@@ -12,6 +12,7 @@ const {
   successTemplate,
   notFoundTemplate,
 } = require("../utils/templateHelper");
+const { cInfo, cWarn, cError, cLog } = require("../utils/consoleHelper.js");
 
 const MODS = new Set([
   "EZ",
@@ -33,7 +34,7 @@ const MODS = new Set([
 const sendRequest = async (input, username) => {
   try {
     if (!isLoggedIn()) {
-      console.log("BanchoJS not connected. Please login first.");
+      cLog("BanchoJS not connected. Please login first.");
       return false;
     }
 
@@ -41,7 +42,7 @@ const sendRequest = async (input, username) => {
     const beatmapId = parseInt(reqArr[0]);
 
     if (!Number.isInteger(beatmapId) || beatmapId <= 0) {
-      console.log("Invalid beatmap id:", beatmapId);
+      cLog("Invalid beatmap id:", beatmapId);
       return false;
     }
 
@@ -80,7 +81,7 @@ const sendRequest = async (input, username) => {
     try {
       data = await v2.beatmap.id.details(beatmapId);
     } catch (e) {
-      console.log("Error fetching beatmap:", e);
+      cLog("Error fetching beatmap:", e);
       return false;
     }
 
@@ -107,7 +108,7 @@ const sendRequest = async (input, username) => {
       const client = getClient();
       const users = getUsers();
       if (!client || !users) {
-        console.log("BanchoJS client not ready.");
+        cLog("BanchoJS client not ready.");
         return false;
       }
 
@@ -130,11 +131,11 @@ const sendRequest = async (input, username) => {
 
       return response;
     } catch (e) {
-      console.log("Failed to send message:", e?.message || e);
+      cLog("Failed to send message:", e?.message || e);
       return false;
     }
   } catch (error) {
-    console.log("Failed to send request:", error?.message || error);
+    cLog("Failed to send request:", error?.message || error);
   }
 };
 

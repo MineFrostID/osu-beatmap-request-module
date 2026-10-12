@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { cInfo, cWarn, cError, cLog } = require("../utils/consoleHelper.js");
 
 const loadTemplate = (fileName) => {
   let templatePath;
@@ -32,19 +33,19 @@ const historyRequest = (username, detail, mapper, reqMods, mapUrl) => {
 };
 
 const successTemplate = (username, detail, mapper, reqMods, mapUrl) => {
-  console.log("=====================================");
-  console.log("REQUEST BY :", username);
-  console.log("DETAIL     :", detail);
-  console.log("MAPPER     :", mapper);
-  console.log("MODS       :", reqMods);
-  console.log("LINK       :", mapUrl);
-  console.log("=====================================");
+  cLog("=====================================");
+  cLog("REQUEST BY :" + username);
+  cLog("DETAIL     :" + detail);
+  cLog("MAPPER     :" + mapper);
+  cLog("MODS       :" + reqMods);
+  cLog("LINK       :" + mapUrl);
+  cLog("=====================================");
 };
 
 const notFoundTemplate = (message) => {
-  console.log("=====================================");
-  console.log(message || "Beatmap not found or API returned error.");
-  console.log("=====================================");
+  cLog("=====================================");
+  cLog(message || "Beatmap not found or API returned error.");
+  cLog("=====================================");
 };
 
 module.exports = {

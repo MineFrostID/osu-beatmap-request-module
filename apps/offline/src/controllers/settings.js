@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { exec } = require("child_process");
+const { cInfo, cError, cLog, cWarn } = require("../utils/consoleHelper.js");
 
 const settingsPath = path.join(path.dirname(process.execPath), "setting.json");
 
@@ -17,7 +18,7 @@ function loadSettings() {
     const raw = fs.readFileSync(settingsPath, "utf8");
     return JSON.parse(raw || "{}");
   } catch (error) {
-    console.warn("Setting file corrupted. Resetting...");
+    cWarn("Setting file corrupted. Resetting...");
     resetSettings();
     return {};
   }
@@ -42,7 +43,7 @@ function isLogin() {
   }
 
   if (hasOauth || hasLegacy) {
-    console.warn("Partial login detected. Resetting settings...");
+    cWarn("Partial login detected. Resetting settings...");
     resetSettings();
   }
 
@@ -68,7 +69,7 @@ const openBrowser = async (port) => {
       exec(`xdg-open ${url}`);
     }
   } catch (error) {
-    console.error("Error opening browser:", error);
+    cError("Error opening browser:", error);
   }
 };
 

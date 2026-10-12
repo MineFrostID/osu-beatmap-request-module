@@ -1,6 +1,7 @@
 const banchojs = require("bancho.js");
 const readline = require("readline");
 const { saveSettings, loadSettings } = require("../controllers/settings");
+const { cInfo, cWarn, cError, cLog } = require("../utils/consoleHelper.js");
 
 let client = null;
 let users = null;
@@ -21,9 +22,9 @@ const handleError = (error, context = "") => {
   if (
     fatalErrors.some((f) => error.message.includes(f) || error.name.includes(f))
   ) {
-    console.error(`Fatal error in ${context}:`, error);
+    cError(`Fatal error in ${context}:`, error);
   } else {
-    console.log(
+    cLog(
       `Oops, something went wrong in ${context}. Please check your input and try again.`,
     );
   }
@@ -37,14 +38,14 @@ const connectBancho = async (username, token) => {
     });
 
     client.on("disconnect", () => {
-      console.log("BANCHOJS DISCONNECTED!");
+      cLog("BANCHOJS DISCONNECTED!");
       loginStatus = false;
     });
 
     await client.connect();
     users = client.getSelf();
 
-    console.log("bancho.js Connected!");
+    cLog("bancho.js Connected!");
     rl.close();
     loginStatus = true;
 
@@ -64,13 +65,13 @@ const loginBanchoJs = async (username, api) => {
     if (loginStatus && client) return { client, users };
 
     if (!api) {
-      console.log("API V1 token cannot be empty. Please try again.");
+      cLog("API V1 token cannot be empty. Please try again.");
       return null;
     }
 
     const connection = await connectBancho(username, api);
     if (!connection) {
-      console.log(
+      cLog(
         "Failed to connect BanchoJS. Please make sure your username and token are correct.",
       );
       return null;
