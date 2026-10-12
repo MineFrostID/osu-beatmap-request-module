@@ -11,26 +11,22 @@ const welcomeMessage = async () => {
   try {
     console.info("WELCOME TO OSU! REQUEST YOUTUBE BOT!");
 
-    if (settingCheck()) {
-      try {
-        if (isLogin()) {
-          const setting = loadSettings();
+    try {
+      if (isLogin()) {
+        historyCheck();
+        const setting = loadSettings();
 
-          await authorizeUser(setting.oauth_code.username);
+        await authorizeUser(setting.oauth_code.username);
 
-          await connectBancho(
-            setting.oauth_code.username,
-            setting.legacy_api_key,
-          );
-
-          console.info("YOU CAN NOW USE THE BOT.");
-          openBrowser(port);
-
-          return;
-        }
-      } catch (error) {
-        console.error("Error loading settings:", error);
+        await connectBancho(
+          setting.oauth_code.username,
+          setting.legacy_api_key,
+        );
+        openBrowser(port);
+        return;
       }
+    } catch (error) {
+      console.error("Error loading settings:", error);
     }
 
     console.info("Please login to your osu! account");
@@ -41,22 +37,11 @@ const welcomeMessage = async () => {
   }
 };
 
-const settingCheck = () => {
-  let status = true;
-
+const historyCheck = () => {
   const historyPath = path.join(process.cwd(), "history");
   if (!fs.existsSync(historyPath)) {
     fs.mkdirSync(historyPath);
-    status = false;
   }
-
-  // const configPath = path.join(process.cwd(), "config.json");
-  // if (!fs.existsSync(configPath)) {
-  //   fs.writeFileSync(configPath, "{}", "utf8");
-  //   status = false;
-  // }
-
-  return status;
 };
 
-module.exports = { welcomeMessage, settingCheck };
+module.exports = { welcomeMessage, historyCheck };

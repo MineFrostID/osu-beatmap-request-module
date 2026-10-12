@@ -21,8 +21,8 @@
       "src/**/*.js"
     ],
     "assets": [
-      "node_modules/lzma/src/**",
-      "node_modules/lzma-native/prebuilds/win32-x64/node.napi.node",
+      "node_modules/lzma",
+      "node_modules/lzma-native",
       "src/views/*.html"
     ],
     "outputPath": "dist",
