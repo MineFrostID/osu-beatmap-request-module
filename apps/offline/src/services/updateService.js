@@ -1,5 +1,11 @@
 const packageJson = require("../../package.json");
-const { cInfo, cWarn, cError, cLog } = require("../utils/consoleHelper.js");
+const {
+  cInfo,
+  cWarn,
+  cError,
+  cLog,
+  cUpdate,
+} = require("../utils/consoleHelper.js");
 
 const CURRENT_VERSION = packageJson.version;
 const GITHUB_REPO = "MineFrostID/osu-beatmap-request-module";
@@ -25,10 +31,10 @@ async function checkForUpdates() {
     const latestVersion = release.tag_name.replace(/^v/, "");
 
     if (compareVersions(latestVersion, CURRENT_VERSION) > 0) {
-      cLog("\n[UPDATE] A new version is available!");
-      cLog(`Current version: ${CURRENT_VERSION}`);
-      cLog(`Latest version:  ${latestVersion}`);
-      cLog(`Release: ${release.html_url}\n`);
+      cUpdate("A new version is available!");
+      cUpdate(`Current version: ${CURRENT_VERSION}`);
+      cUpdate(`Latest version:  ${latestVersion}`);
+      cUpdate(`Release: ${release.html_url}\n`);
 
       return {
         updateAvailable: true,
@@ -38,7 +44,7 @@ async function checkForUpdates() {
       };
     }
 
-    cLog(`[UPDATE] You're using the latest version (${CURRENT_VERSION}).`);
+    cUpdate(`You're using the latest version (${CURRENT_VERSION}).`);
 
     return {
       updateAvailable: false,
@@ -46,7 +52,7 @@ async function checkForUpdates() {
       latestVersion,
     };
   } catch (error) {
-    cWarn(`[UPDATE] Could not check for updates: ${error.message}`);
+    cWarn(`Could not check for updates: ${error.message}`);
 
     return {
       updateAvailable: false,

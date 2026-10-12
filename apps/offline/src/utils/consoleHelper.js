@@ -14,4 +14,12 @@ const cLog = (message) => {
   console.log(`[LOG] ${message}`);
 };
 
-module.exports = { cInfo, cWarn, cError, cLog };
+const cUpdate = (message) => {
+  console.log(`[UPDATE] ${message}`);
+};
+
+const cSuccess = (message) => {
+  console.log(`[SUCCESS] ${message}`);
+};
+
+module.exports = { cInfo, cWarn, cError, cLog, cUpdate, cSuccess };

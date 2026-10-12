@@ -34,7 +34,7 @@ const MODS = new Set([
 const sendRequest = async (input, username) => {
   try {
     if (!isLoggedIn()) {
-      cLog("BanchoJS not connected. Please login first.");
+      cWarn("BanchoJS not connected. Please login first.");
       return false;
     }
 
@@ -42,7 +42,7 @@ const sendRequest = async (input, username) => {
     const beatmapId = parseInt(reqArr[0]);
 
     if (!Number.isInteger(beatmapId) || beatmapId <= 0) {
-      cLog("Invalid beatmap id:", beatmapId);
+      cWarn("Invalid beatmap id:", beatmapId);
       return false;
     }
 
@@ -81,7 +81,7 @@ const sendRequest = async (input, username) => {
     try {
       data = await v2.beatmap.id.details(beatmapId);
     } catch (e) {
-      cLog("Error fetching beatmap:", e);
+      cWarn("Error fetching beatmap:", e);
       return false;
     }
 
@@ -131,11 +131,11 @@ const sendRequest = async (input, username) => {
 
       return response;
     } catch (e) {
-      cLog("Failed to send message:", e?.message || e);
+      cWarn("Failed to send message:", e?.message || e);
       return false;
     }
   } catch (error) {
-    cLog("Failed to send request:", error?.message || error);
+    cWarn("Failed to send request:", error?.message || error);
   }
 };
 

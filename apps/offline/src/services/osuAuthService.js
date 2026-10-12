@@ -1,7 +1,13 @@
 const { auth } = require("osu-api-extended");
 const { loadSettings, saveSettings } = require("../controllers/settings");
 const config = require("../../config.json");
-const { cInfo, cWarn, cError, cLog } = require("../utils/consoleHelper.js");
+const {
+  cInfo,
+  cWarn,
+  cError,
+  cLog,
+  cSuccess,
+} = require("../utils/consoleHelper.js");
 
 const client_id = config.clientId;
 const client_secret = config.clientSecret;
@@ -16,7 +22,7 @@ const buildLoginUrl = () => {
 
 const redirectUser = async (code) => {
   if (!code) {
-    cLog("Authorization code is missing. Please login first.");
+    cWarn("Authorization code is missing. Please login first.");
     return null;
   }
 
@@ -30,7 +36,7 @@ const redirectUser = async (code) => {
     );
 
     if (userInfo?.authentication === "basic") {
-      cLog(
+      cWarn(
         "Failed to authorize. Please check your CLIENT_ID, CLIENT_SECRET, or REDIRECT_URI.",
       );
       return null;
@@ -62,7 +68,7 @@ const authorizeUser = async (username) => {
       saveSettings(setting);
     }
 
-    cLog("osu-api-extended connected successfully!");
+    cSuccess("osu-api-extended connected successfully!");
   } catch (error) {
     handleError(error, "authorizeUser");
   }
@@ -83,7 +89,7 @@ const handleError = (error, context = "") => {
   ) {
     cError(`Fatal error in ${context}:`, error);
   } else {
-    cLog(`Oops, something went wrong in ${context}. Please try again.`);
+    cWarn(`Oops, something went wrong in ${context}. Please try again.`);
   }
 };
 
