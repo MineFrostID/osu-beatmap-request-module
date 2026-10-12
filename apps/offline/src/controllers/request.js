@@ -15,37 +15,19 @@ const {
 
 const MODS = new Set([
   "EZ",
-  "HD",
+  "NF",
+  "HT",
   "HR",
+  "SD",
+  "PF",
   "DT",
   "NC",
+  "HD",
   "FL",
-  "EZDT",
-  "DTEZ",
-  "EZHD",
-  "HDEZ",
-  "EZNC",
-  "NCEZ",
-  "EZFL",
-  "FLEZ",
-  "HDHR",
-  "HRHD",
-  "HDDT",
-  "DTHD",
-  "HDNC",
-  "NCHD",
-  "HDFL",
-  "FLHD",
-  "HRDT",
-  "DTHR",
-  "HRNC",
-  "NCHR",
-  "HRFL",
-  "FLHR",
-  "DTFL",
-  "FLDT",
-  "NCFL",
-  "FLNC",
+  "RX",
+  "AP",
+  "SO",
+  "V2",
 ]);
 
 const sendRequest = async (input, username) => {
@@ -57,22 +39,42 @@ const sendRequest = async (input, username) => {
 
     const reqArr = input.split(" ");
     const beatmapId = parseInt(reqArr[0]);
-    let reqMods = "NM";
 
     if (!Number.isInteger(beatmapId) || beatmapId <= 0) {
-      console.log("Invalid beatmap id:", beatmapIdRaw);
+      console.log("Invalid beatmap id:", beatmapId);
       return false;
     }
 
-    if (reqArr.length > 1) {
-      for (let i = 1; i < reqArr.length; i++) {
-        const mod = reqArr[i].toUpperCase();
-        if (MODS.has(mod)) {
-          reqMods = mod;
-          break;
-        }
+    // Mods check
+    const foundMods = new Set();
+    const regex = /\b(?:EZ|NF|HT|HR|SD|PF|DT|NC|HD|FL|RX|AP|SO|V2)+\b/g;
+    const matches = input.toUpperCase().match(regex) || [];
+    for (const match of matches) {
+      let remaining = match;
+      while (remaining.length > 0) {
+        const mod = [...MODS]
+          .sort((a, b) => b.length - a.length)
+          .find((m) => remaining.startsWith(m));
+        if (!mod) break;
+        foundMods.add(mod);
+        remaining = remaining.slice(mod.length);
       }
     }
+
+    const CONFLICTING_MODS = [
+      new Set(["DT", "NC", "HT"]),
+      new Set(["HR", "EZ"]),
+      new Set(["SD", "PF"]),
+      new Set(["RX", "AP", "SO"]),
+    ];
+    for (const group of CONFLICTING_MODS) {
+      const matchedMods = [...foundMods].filter((mod) => group.has(mod));
+      for (const mod of matchedMods.slice(1)) {
+        foundMods.delete(mod);
+      }
+    }
+
+    let reqMods = foundMods.size > 0 ? [...foundMods].join("") : "NM";
 
     let data;
     try {
