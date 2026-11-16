@@ -6,6 +6,7 @@ const {
   loadSettings,
   isLogin,
   openBrowser,
+  resetSettings,
 } = require("../controllers/settings.js");
 const config = require("../../config.json");
 const { checkForUpdates } = require("../services/updateService.js");
@@ -26,6 +27,9 @@ const welcomeMessage = async () => {
       await connectBancho(setting.oauth_code.username, setting.legacy_api_key);
       openBrowser(port);
       return;
+    } else {
+      resetSettings();
+      cWarn("No valid login found");
     }
   } catch (error) {
     cError("Error loading settings:", error);
