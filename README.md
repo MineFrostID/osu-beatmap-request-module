@@ -1,7 +1,4 @@
 # osu-Beatmap-Request-Module
-
-(IF YOU ARE PLAYING ON LAZER, I'M SORRY. THIS BOT IS NOT WORKING ON LAZER FOR NOW)
-<br/>
 Join my Discord server if you want to ask about something : **[Join Here](https://discord.gg/RT5eC26qYa)** (Mostly Indonesian)
 
 ## Preparation
