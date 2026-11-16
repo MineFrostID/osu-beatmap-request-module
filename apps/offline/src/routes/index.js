@@ -21,6 +21,14 @@ router.get("/", (req, res) => {
   res.send(template);
 });
 
+(router.get("/status"),
+  (req, res) => {
+    return res.json({
+      status: "online",
+      loggedIn: isLoggedIn(),
+    });
+  });
+
 router.get("/login", async (req, res) => {
   if (isLoggedIn()) {
     openBrowser(port);
