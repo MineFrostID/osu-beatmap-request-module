@@ -5,14 +5,12 @@ const {
   getUsers,
   isLoggedIn,
 } = require("../services/banchoService");
-const path = require("path");
-const fs = require("fs");
 const {
   historyRequest,
   successTemplate,
   notFoundTemplate,
 } = require("../utils/templateHelper");
-const { cInfo, cWarn, cError, cLog } = require("../utils/consoleHelper.js");
+const { cWarn, cLog } = require("../utils/consoleHelper.js");
 
 const MODS = new Set([
   "EZ",
@@ -42,16 +40,24 @@ const sendRequest = async (input, username) => {
       return response;
     }
 
-    const reqArr = input.split(" ");
-    const beatmapId = parseInt(reqArr[0]);
+    // Beatmap ID check
+    const reqArr = input.trim().split(/\s+/);
+    const idToken = reqArr[0];
 
-    if (!Number.isInteger(beatmapId) || beatmapId <= 0) {
-      cWarn("Invalid beatmap id:", beatmapId);
-      const response = {
+    if (!/^\d+$/.test(idToken)) {
+      return {
         status: "error",
-        message: "Invalid beatmap id. Please provide a valid positive integer.",
+        message: "Invalid beatmap id.",
       };
-      return response;
+    }
+
+    const beatmapId = Number(idToken);
+
+    if (!Number.isSafeInteger(beatmapId) || beatmapId <= 0) {
+      return {
+        status: "error",
+        message: "Invalid beatmap id.",
+      };
     }
 
     // Mods check
@@ -133,7 +139,7 @@ const sendRequest = async (input, username) => {
         users,
         `${username} => [${reqMods}] ${message}`,
       );
-      banchoMessage.send();
+      await banchoMessage.send();
 
       successTemplate(username, detail, mapper, reqMods, mapUrl);
 
@@ -156,6 +162,11 @@ const sendRequest = async (input, username) => {
     }
   } catch (error) {
     cWarn("Failed to send request:", error?.message || error);
+    const response = {
+      status: "error",
+      message: "Failed to send request.",
+    };
+    return response;
   }
 };
 

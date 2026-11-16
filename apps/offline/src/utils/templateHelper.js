@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { cInfo, cWarn, cError, cLog } = require("../utils/consoleHelper.js");
+const { cLog } = require("../utils/consoleHelper.js");
 
 const loadTemplate = (fileName) => {
   let templatePath;

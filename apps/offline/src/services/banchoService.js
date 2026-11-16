@@ -1,22 +1,10 @@
 const banchojs = require("bancho.js");
-const readline = require("readline");
 const { saveSettings, loadSettings } = require("../controllers/settings");
-const {
-  cInfo,
-  cWarn,
-  cError,
-  cLog,
-  cSuccess,
-} = require("../utils/consoleHelper.js");
+const { cWarn, cError, cSuccess } = require("../utils/consoleHelper.js");
 
 let client = null;
 let users = null;
 let loginStatus = false;
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
 
 const handleError = (error, context = "") => {
   const fatalErrors = [
@@ -25,9 +13,10 @@ const handleError = (error, context = "") => {
     "TypeError",
     "ReferenceError",
   ];
-  if (
-    fatalErrors.some((f) => error.message.includes(f) || error.name.includes(f))
-  ) {
+
+  const message = error?.message || String(error);
+  const name = error?.name || "";
+  if (fatalErrors.some((f) => message.includes(f) || name.includes(f))) {
     cError(`Fatal error in ${context}:`, error);
   } else {
     cWarn(
@@ -44,15 +33,16 @@ const connectBancho = async (username, token) => {
     });
 
     client.on("disconnect", () => {
-      cWarn("BANCHOJS DISCONNECTED!");
+      client = null;
+      users = null;
       loginStatus = false;
+      cWarn("BANCHOJS DISCONNECTED!");
     });
 
     await client.connect();
     users = client.getSelf();
 
     cSuccess("bancho.js Connected!");
-    rl.close();
     loginStatus = true;
 
     const setting = loadSettings();

@@ -10,7 +10,7 @@ const {
 } = require("../controllers/settings.js");
 const config = require("../../config.json");
 const { checkForUpdates } = require("../services/updateService.js");
-const { cInfo, cWarn, cError, cLog } = require("../utils/consoleHelper.js");
+const { cInfo, cWarn, cError } = require("../utils/consoleHelper.js");
 
 const port = config.port || 3000;
 
@@ -22,11 +22,19 @@ const welcomeMessage = async () => {
     if (isLogin()) {
       const setting = loadSettings();
 
-      await authorizeUser(setting.oauth_code.username);
+      const authorizeResult = await authorizeUser(setting.oauth_code.username);
 
-      await connectBancho(setting.oauth_code.username, setting.legacy_api_key);
-      openBrowser(port);
-      return;
+      if (!authorizeResult) {
+        resetSettings();
+        cWarn("Authorization failed. Please login again.");
+      } else {
+        await connectBancho(
+          setting.oauth_code.username,
+          setting.legacy_api_key,
+        );
+        openBrowser(port);
+        return;
+      }
     } else {
       resetSettings();
       cWarn("No valid login found");

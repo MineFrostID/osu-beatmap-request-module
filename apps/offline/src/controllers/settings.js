@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { exec } = require("child_process");
-const { cInfo, cError, cLog, cWarn } = require("../utils/consoleHelper.js");
+const { cError, cWarn } = require("../utils/consoleHelper.js");
 
 const settingsPath = path.join(path.dirname(process.execPath), "setting.json");
 

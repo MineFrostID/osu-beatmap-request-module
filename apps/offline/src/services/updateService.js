@@ -1,9 +1,6 @@
 const packageJson = require("../../package.json");
 const {
-  cInfo,
   cWarn,
-  cError,
-  cLog,
   cUpdate,
 } = require("../utils/consoleHelper.js");
 

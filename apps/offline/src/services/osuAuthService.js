@@ -2,10 +2,8 @@ const { auth } = require("osu-api-extended");
 const { loadSettings, saveSettings } = require("../controllers/settings");
 const config = require("../../config.json");
 const {
-  cInfo,
   cWarn,
   cError,
-  cLog,
   cSuccess,
 } = require("../utils/consoleHelper.js");
 
@@ -42,7 +40,11 @@ const redirectUser = async (code) => {
       return null;
     }
 
-    await authorizeUser(userInfo.username);
+    const authorized = await authorizeUser(userInfo.username);
+    if (!authorized) {
+      cWarn("Failed to authorize user. Please check your credentials.");
+      return null;
+    }
     return userInfo;
   } catch (error) {
     handleError(error, "redirectUser");
@@ -69,8 +71,10 @@ const authorizeUser = async (username) => {
     }
 
     cSuccess("osu-api-extended connected successfully!");
+    return true;
   } catch (error) {
     handleError(error, "authorizeUser");
+    return false;
   }
 };
 
@@ -84,9 +88,9 @@ const handleError = (error, context = "") => {
     "ReferenceError",
   ];
 
-  if (
-    fatalErrors.some((f) => error.message.includes(f) || error.name.includes(f))
-  ) {
+  const message = error?.message || String(error);
+  const name = error?.name || "";
+  if (fatalErrors.some((f) => message.includes(f) || name.includes(f))) {
     cError(`Fatal error in ${context}:`, error);
   } else {
     cWarn(`Oops, something went wrong in ${context}. Please try again.`);
