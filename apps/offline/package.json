@@ -1,6 +1,6 @@
 {
   "name": "osu-beatmap-request-module",
-  "version": "1.5.5",
+  "version": "1.5.6",
   "private": false,
   "scripts": {
     "start": "node ./bin/www",
@@ -14,18 +14,21 @@
   "bin": "./bin/www",
   "pkg": {
     "targets": [
-      "node18-win-x64"
+      "node22-win-x64"
     ],
     "scripts": [
       "app.js",
       "src/**/*.js"
     ],
     "assets": [
-      "node_modules/lzma/src/**",
-      "node_modules/lzma-native/prebuilds/win32-x64/node.napi.node",
+      "node_modules/lzma",
+      "node_modules/lzma-native",
       "src/views/*.html"
     ],
     "outputPath": "dist",
-    "compression": "GZip"
+    "compress": "GZip"
+  },
+  "devDependencies": {
+    "@yao-pkg/pkg": "^6.23.0"
   }
 }

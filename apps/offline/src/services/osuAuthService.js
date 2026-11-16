@@ -1,6 +1,11 @@
 const { auth } = require("osu-api-extended");
 const { loadSettings, saveSettings } = require("../controllers/settings");
 const config = require("../../config.json");
+const {
+  cWarn,
+  cError,
+  cSuccess,
+} = require("../utils/consoleHelper.js");
 
 const client_id = config.clientId;
 const client_secret = config.clientSecret;
@@ -15,7 +20,7 @@ const buildLoginUrl = () => {
 
 const redirectUser = async (code) => {
   if (!code) {
-    console.log("Authorization code is missing. Please login first.");
+    cWarn("Authorization code is missing. Please login first.");
     return null;
   }
 
@@ -29,13 +34,17 @@ const redirectUser = async (code) => {
     );
 
     if (userInfo?.authentication === "basic") {
-      console.log(
+      cWarn(
         "Failed to authorize. Please check your CLIENT_ID, CLIENT_SECRET, or REDIRECT_URI.",
       );
       return null;
     }
 
-    await authorizeUser(userInfo.username);
+    const authorized = await authorizeUser(userInfo.username);
+    if (!authorized) {
+      cWarn("Failed to authorize user. Please check your credentials.");
+      return null;
+    }
     return userInfo;
   } catch (error) {
     handleError(error, "redirectUser");
@@ -61,9 +70,11 @@ const authorizeUser = async (username) => {
       saveSettings(setting);
     }
 
-    console.log("osu-api-extended connected successfully!");
+    cSuccess("osu-api-extended connected successfully!");
+    return true;
   } catch (error) {
     handleError(error, "authorizeUser");
+    return false;
   }
 };
 
@@ -77,12 +88,12 @@ const handleError = (error, context = "") => {
     "ReferenceError",
   ];
 
-  if (
-    fatalErrors.some((f) => error.message.includes(f) || error.name.includes(f))
-  ) {
-    console.error(`Fatal error in ${context}:`, error);
+  const message = error?.message || String(error);
+  const name = error?.name || "";
+  if (fatalErrors.some((f) => message.includes(f) || name.includes(f))) {
+    cError(`Fatal error in ${context}:`, error);
   } else {
-    console.log(`Oops, something went wrong in ${context}. Please try again.`);
+    cWarn(`Oops, something went wrong in ${context}. Please try again.`);
   }
 };
 

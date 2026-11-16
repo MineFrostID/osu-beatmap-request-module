@@ -5,81 +5,102 @@ const {
   getUsers,
   isLoggedIn,
 } = require("../services/banchoService");
-const path = require("path");
-const fs = require("fs");
 const {
   historyRequest,
   successTemplate,
   notFoundTemplate,
 } = require("../utils/templateHelper");
+const { cWarn, cLog } = require("../utils/consoleHelper.js");
 
 const MODS = new Set([
   "EZ",
-  "HD",
+  "NF",
+  "HT",
   "HR",
+  "SD",
+  "PF",
   "DT",
   "NC",
+  "HD",
   "FL",
-  "EZDT",
-  "DTEZ",
-  "EZHD",
-  "HDEZ",
-  "EZNC",
-  "NCEZ",
-  "EZFL",
-  "FLEZ",
-  "HDHR",
-  "HRHD",
-  "HDDT",
-  "DTHD",
-  "HDNC",
-  "NCHD",
-  "HDFL",
-  "FLHD",
-  "HRDT",
-  "DTHR",
-  "HRNC",
-  "NCHR",
-  "HRFL",
-  "FLHR",
-  "DTFL",
-  "FLDT",
-  "NCFL",
-  "FLNC",
+  "RX",
+  "AP",
+  "SO",
+  "V2",
 ]);
 
 const sendRequest = async (input, username) => {
   try {
     if (!isLoggedIn()) {
-      console.log("BanchoJS not connected. Please login first.");
-      return false;
+      cWarn("BanchoJS not connected. Please login first.");
+      const response = {
+        status: "error",
+        message: "BanchoJS not connected. Please login first.",
+      };
+      return response;
     }
 
-    const reqArr = input.split(" ");
-    const beatmapId = parseInt(reqArr[0]);
-    let reqMods = "NM";
+    // Beatmap ID check
+    const reqArr = input.trim().split(/\s+/);
+    const idToken = reqArr[0];
 
-    if (!Number.isInteger(beatmapId) || beatmapId <= 0) {
-      console.log("Invalid beatmap id:", beatmapIdRaw);
-      return false;
+    if (!/^\d+$/.test(idToken)) {
+      return {
+        status: "error",
+        message: "Invalid beatmap id.",
+      };
     }
 
-    if (reqArr.length > 1) {
-      for (let i = 1; i < reqArr.length; i++) {
-        const mod = reqArr[i].toUpperCase();
-        if (MODS.has(mod)) {
-          reqMods = mod;
-          break;
-        }
+    const beatmapId = Number(idToken);
+
+    if (!Number.isSafeInteger(beatmapId) || beatmapId <= 0) {
+      return {
+        status: "error",
+        message: "Invalid beatmap id.",
+      };
+    }
+
+    // Mods check
+    const foundMods = new Set();
+    const regex = /\b(?:EZ|NF|HT|HR|SD|PF|DT|NC|HD|FL|RX|AP|SO|V2)+\b/g;
+    const matches = input.toUpperCase().match(regex) || [];
+    for (const match of matches) {
+      let remaining = match;
+      while (remaining.length > 0) {
+        const mod = [...MODS]
+          .sort((a, b) => b.length - a.length)
+          .find((m) => remaining.startsWith(m));
+        if (!mod) break;
+        foundMods.add(mod);
+        remaining = remaining.slice(mod.length);
       }
     }
+
+    const CONFLICTING_MODS = [
+      new Set(["DT", "NC", "HT"]),
+      new Set(["HR", "EZ"]),
+      new Set(["SD", "PF"]),
+      new Set(["RX", "AP", "SO"]),
+    ];
+    for (const group of CONFLICTING_MODS) {
+      const matchedMods = [...foundMods].filter((mod) => group.has(mod));
+      for (const mod of matchedMods.slice(1)) {
+        foundMods.delete(mod);
+      }
+    }
+
+    let reqMods = foundMods.size > 0 ? [...foundMods].join("") : "NM";
 
     let data;
     try {
       data = await v2.beatmap.id.details(beatmapId);
     } catch (e) {
-      console.log("Error fetching beatmap:", e);
-      return false;
+      cWarn("Error fetching beatmap:", e);
+      const response = {
+        status: "error",
+        message: "Error fetching beatmap.",
+      };
+      return response;
     }
 
     if (!data || data.error) {
@@ -105,8 +126,12 @@ const sendRequest = async (input, username) => {
       const client = getClient();
       const users = getUsers();
       if (!client || !users) {
-        console.log("BanchoJS client not ready.");
-        return false;
+        cLog("BanchoJS client not ready.");
+        const response = {
+          status: "error",
+          message: "BanchoJS not connected. Please login first.",
+        };
+        return response;
       }
 
       const banchoMessage = new banchojs.OutgoingBanchoMessage(
@@ -114,7 +139,7 @@ const sendRequest = async (input, username) => {
         users,
         `${username} => [${reqMods}] ${message}`,
       );
-      banchoMessage.send();
+      await banchoMessage.send();
 
       successTemplate(username, detail, mapper, reqMods, mapUrl);
 
@@ -128,11 +153,20 @@ const sendRequest = async (input, username) => {
 
       return response;
     } catch (e) {
-      console.log("Failed to send message:", e?.message || e);
-      return false;
+      cWarn("Failed to send message:", e?.message || e);
+      const response = {
+        status: "error",
+        message: "Failed to send message.",
+      };
+      return response;
     }
   } catch (error) {
-    console.log("Failed to send request:", error?.message || error);
+    cWarn("Failed to send request:", error?.message || error);
+    const response = {
+      status: "error",
+      message: "Failed to send request.",
+    };
+    return response;
   }
 };
 

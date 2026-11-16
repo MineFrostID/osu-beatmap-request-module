@@ -1,15 +1,10 @@
 const banchojs = require("bancho.js");
-const readline = require("readline");
 const { saveSettings, loadSettings } = require("../controllers/settings");
+const { cWarn, cError, cSuccess } = require("../utils/consoleHelper.js");
 
 let client = null;
 let users = null;
 let loginStatus = false;
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
 
 const handleError = (error, context = "") => {
   const fatalErrors = [
@@ -18,12 +13,13 @@ const handleError = (error, context = "") => {
     "TypeError",
     "ReferenceError",
   ];
-  if (
-    fatalErrors.some((f) => error.message.includes(f) || error.name.includes(f))
-  ) {
-    console.error(`Fatal error in ${context}:`, error);
+
+  const message = error?.message || String(error);
+  const name = error?.name || "";
+  if (fatalErrors.some((f) => message.includes(f) || name.includes(f))) {
+    cError(`Fatal error in ${context}:`, error);
   } else {
-    console.log(
+    cWarn(
       `Oops, something went wrong in ${context}. Please check your input and try again.`,
     );
   }
@@ -37,15 +33,16 @@ const connectBancho = async (username, token) => {
     });
 
     client.on("disconnect", () => {
-      console.log("BANCHOJS DISCONNECTED!");
+      client = null;
+      users = null;
       loginStatus = false;
+      cWarn("BANCHOJS DISCONNECTED!");
     });
 
     await client.connect();
     users = client.getSelf();
 
-    console.log("bancho.js Connected!");
-    rl.close();
+    cSuccess("bancho.js Connected!");
     loginStatus = true;
 
     const setting = loadSettings();
@@ -64,13 +61,13 @@ const loginBanchoJs = async (username, api) => {
     if (loginStatus && client) return { client, users };
 
     if (!api) {
-      console.log("API V1 token cannot be empty. Please try again.");
+      cWarn("API V1 token cannot be empty. Please try again.");
       return null;
     }
 
     const connection = await connectBancho(username, api);
     if (!connection) {
-      console.log(
+      cWarn(
         "Failed to connect BanchoJS. Please make sure your username and token are correct.",
       );
       return null;
