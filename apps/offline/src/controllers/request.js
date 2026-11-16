@@ -35,7 +35,11 @@ const sendRequest = async (input, username) => {
   try {
     if (!isLoggedIn()) {
       cWarn("BanchoJS not connected. Please login first.");
-      return false;
+      const response = {
+        status: "error",
+        message: "BanchoJS not connected. Please login first.",
+      };
+      return response;
     }
 
     const reqArr = input.split(" ");
@@ -43,7 +47,11 @@ const sendRequest = async (input, username) => {
 
     if (!Number.isInteger(beatmapId) || beatmapId <= 0) {
       cWarn("Invalid beatmap id:", beatmapId);
-      return false;
+      const response = {
+        status: "error",
+        message: "Invalid beatmap id. Please provide a valid positive integer.",
+      };
+      return response;
     }
 
     // Mods check
@@ -82,7 +90,11 @@ const sendRequest = async (input, username) => {
       data = await v2.beatmap.id.details(beatmapId);
     } catch (e) {
       cWarn("Error fetching beatmap:", e);
-      return false;
+      const response = {
+        status: "error",
+        message: "Error fetching beatmap.",
+      };
+      return response;
     }
 
     if (!data || data.error) {
@@ -109,7 +121,11 @@ const sendRequest = async (input, username) => {
       const users = getUsers();
       if (!client || !users) {
         cLog("BanchoJS client not ready.");
-        return false;
+        const response = {
+          status: "error",
+          message: "BanchoJS not connected. Please login first.",
+        };
+        return response;
       }
 
       const banchoMessage = new banchojs.OutgoingBanchoMessage(
@@ -132,7 +148,11 @@ const sendRequest = async (input, username) => {
       return response;
     } catch (e) {
       cWarn("Failed to send message:", e?.message || e);
-      return false;
+      const response = {
+        status: "error",
+        message: "Failed to send message.",
+      };
+      return response;
     }
   } catch (error) {
     cWarn("Failed to send request:", error?.message || error);
